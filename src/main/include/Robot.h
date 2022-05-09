@@ -8,8 +8,51 @@
 
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
-
+#include <frc/Joystick.h>
+#include <frc/motorcontrol/Talon.h>
+#include <frc/motorcontrol/MotorControllerGroup.h>
+#include <Mappings.h>
+#include <frc/drive/DifferentialDrive.h>
+#include <frc/DoubleSolenoid.h>
+#include <frc/Timer.h>
+#include <frc/Compressor.h>
+#include <frc/DriverStation.h>
+#include <frc/Relay.h>
+#include <frc/Servo.h>
+#include <frc/Encoder.h>
 class Robot : public frc::TimedRobot {
+  frc::Joystick DriveStick{0};
+  frc::Talon lDrive0{PWMCHANNELDRIVEL0};
+  frc::Talon lDrive1{PWMCHANNELDRIVEL1};
+  frc::Talon rDrive0{PWMCHANNELDRIVER0};
+  frc::Talon rDrive1{PWMCHANNELDRIVER1};
+  frc::MotorControllerGroup lDrive{lDrive0, lDrive1};
+  frc::MotorControllerGroup rDrive{rDrive0, rDrive1};
+  frc::DifferentialDrive drive{lDrive, rDrive};
+
+  //Effector motors
+  frc::Talon cpMotor{PWMCHANNELCPMOTOR};
+  frc::Talon climb{PWMCHANNELCLIMBM};
+  frc::Servo climbSRVO{PWMCHANNELCLIMBSRVO};
+  frc::Talon pickupM{PWMCHANNELPICKUP};
+  frc::Talon ShootWhlA{PWMCHANNELSHOOTWHLA};
+  frc::Talon ShootWhlB{PWMCHANNELSHOOTWHLB};
+  frc::Relay ShootPosMotor{RELAYCHANNELSHOOTPOS, ShootPosMotor.kBothDirections};
+  frc::Talon BeltZ1A{PWNCHANNELBELTZ1A};
+  frc::Talon BeltZ1B{PWMCHANNELBELTZ1B};
+  frc::Talon BeltZ2{PWMCHANNELBELTZ2};
+  frc::Talon BeltZ3{PWMCHANNELBELTZ3};
+  frc::MotorControllerGroup ShootWhl{ShootWhlA, ShootWhlB};
+  frc::MotorControllerGroup BeltZ1{BeltZ1A, BeltZ1B};
+  //Pneumatics
+  frc::Compressor compressor{0,frc::PneumaticsModuleType::CTREPCM};
+  frc::DoubleSolenoid colorSensorArm{0, frc::PneumaticsModuleType::CTREPCM, PCMARTICULATOROUT, PCMARTICULATORIN};
+  frc::DoubleSolenoid pickupPneumatic{0, frc::PneumaticsModuleType::CTREPCM, PCMPICKUPOUT, PCMPICKUPIN};
+  frc::DoubleSolenoid bottomTension{0, frc::PneumaticsModuleType::CTREPCM, PCMBOTTOMTENSIONF, PCMBOTTOMTENSIONR};
+  frc::DoubleSolenoid topTension{0, frc::PneumaticsModuleType::CTREPCM, PCMTOPTENSIONF, PCMTOPTENSIONR};
+  frc::Encoder ShootPosEncoder{DIOSHOOTPOSA, DIOSHOOTPOSB,false,frc::Encoder::k4X};
+	frc::Encoder leftDriveEncoder{DIGCHANNELLEFTDRIVEA,DIGCHANNELLEFTDRIVEB,false,frc::Encoder::k4X};
+	frc::Encoder rightDriveEncoder{DIGCHANNELRIGHTDRIVEA,DIGCHANNELRIGHTDRIVEB,false,frc::Encoder::k4X};
  public:
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -25,8 +68,5 @@ class Robot : public frc::TimedRobot {
   void SimulationPeriodic() override;
 
  private:
-  frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoNameDefault = "Default";
-  const std::string kAutoNameCustom = "My Auto";
-  std::string m_autoSelected;
+
 };
