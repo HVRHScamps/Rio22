@@ -42,4 +42,5 @@ encRst | double | Call for encoder reset
 2 | reset left drive encoder
 3 | reset right drive encoder
 4 | reset shoot speed counter
+
 After action is performed, RoboRio sets value back to 0
