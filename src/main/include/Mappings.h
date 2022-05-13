@@ -28,7 +28,7 @@
 #define DIGCHANNELLEFTDRIVEB 5
 #define DIGCHANNELRIGHTDRIVEA 6
 #define DIGCHANNELRIGHTDRIVEB 7
-
+#define DIGCHANNELSHOOTSPEED 8
 //Analog I/O channel Mapping
 
 //Pneumatic Channel mappings

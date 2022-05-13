@@ -5,7 +5,7 @@
 #pragma once
 
 #include <string>
-
+#include <rev/ColorSensorV3.h>
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/Joystick.h>
@@ -20,6 +20,9 @@
 #include <frc/Relay.h>
 #include <frc/Servo.h>
 #include <frc/Encoder.h>
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableEntry.h"
+#include "networktables/NetworkTableInstance.h"
 class Robot : public frc::TimedRobot {
   frc::Joystick DriveStick{0};
   frc::Talon lDrive0{PWMCHANNELDRIVEL0};
@@ -53,6 +56,13 @@ class Robot : public frc::TimedRobot {
   frc::Encoder ShootPosEncoder{DIOSHOOTPOSA, DIOSHOOTPOSB,false,frc::Encoder::k4X};
 	frc::Encoder leftDriveEncoder{DIGCHANNELLEFTDRIVEA,DIGCHANNELLEFTDRIVEB,false,frc::Encoder::k4X};
 	frc::Encoder rightDriveEncoder{DIGCHANNELRIGHTDRIVEA,DIGCHANNELRIGHTDRIVEB,false,frc::Encoder::k4X};
+  frc::Counter ShootSpeed{DIGCHANNELSHOOTSPEED};
+  static constexpr auto i2cPort0 = frc::I2C::Port::kOnboard;
+  rev::ColorSensorV3 colorSensor0{i2cPort0};
+
+  nt::NetworkTableInstance inst;
+  std::shared_ptr<nt::NetworkTable> controlTable;
+  std::shared_ptr<nt::NetworkTable> sensorTable;
  public:
   void RobotInit() override;
   void RobotPeriodic() override;

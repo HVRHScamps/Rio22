@@ -9,7 +9,13 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 void Robot::RobotInit() {
-
+  colorSensorArm.Set(colorSensorArm.kReverse); //initalize the actuator
+  bottomTension.Set(bottomTension.kForward);
+  topTension.Set(topTension.kReverse);
+  compressor.EnableDigital();
+  inst = nt::NetworkTableInstance::GetDefault();
+  controlTable = inst.GetTable("control");
+  sensorTable = inst.GetTable("sensor");
 }
 
 
