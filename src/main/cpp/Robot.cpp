@@ -88,7 +88,7 @@ void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {}
 
-frc::DoubleSolenoid::Value Robot:: ConvertPNM(std::string_view key){
+frc::DoubleSolenoid::Value Robot::ConvertPNM(std::string_view key){
   bool val = controlTable->GetBoolean(key,0);
   if(val==1){return frc::DoubleSolenoid::kForward;}
   else if(val==-1){return frc::DoubleSolenoid::kReverse;}
