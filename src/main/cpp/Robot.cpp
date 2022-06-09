@@ -16,6 +16,8 @@ void Robot::RobotInit() {
   inst = nt::NetworkTableInstance::GetDefault();
   controlTable = inst.GetTable("control");
   sensorTable = inst.GetTable("sensor");
+  leftDriveEncoder.SetDistancePerPulse(1/18.852);
+  rightDriveEncoder.SetDistancePerPulse(1/18.852);
 }
 
 
@@ -24,8 +26,8 @@ void Robot::RobotPeriodic() {
   sensorTable->PutBoolean("Override",!IsAutonomous());
   sensorTable->PutBoolean("Enable",IsEnabled());
   sensorTable->PutNumber("shootEncoder",ShootPosEncoder.Get());
-  sensorTable->PutNumber("driveEncoderL",leftDriveEncoder.Get());
-  sensorTable->PutNumber("driveEncoderR",rightDriveEncoder.Get());
+  sensorTable->PutNumber("driveEncoderL",leftDriveEncoder.GetDistance());
+  sensorTable->PutNumber("driveEncoderR",rightDriveEncoder.GetDistance());
   sensorTable->PutNumber("shootCounter",ShootSpeed.Get());
   sensorTable->PutNumber("colorProximity",colorSensor0.GetProximity());
   clrs = {colorSensor0.GetColor().red,colorSensor0.GetColor().green,colorSensor0.GetColor().blue};
@@ -35,6 +37,7 @@ void Robot::RobotPeriodic() {
 
 void Robot::AutonomousInit() {
 rDrive.SetInverted(true);
+rightDriveEncoder.SetReverseDirection(true);
 }
 
 void Robot::AutonomousPeriodic() {
