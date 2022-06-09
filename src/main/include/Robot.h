@@ -64,7 +64,8 @@ class Robot : public frc::TimedRobot {
   std::shared_ptr<nt::NetworkTable> controlTable;
   std::shared_ptr<nt::NetworkTable> sensorTable;
   std::vector<double> clrs;
-  unsigned long lastnum = 0;
+  double lastnum = 0.0;
+  int lnbadcount = 0;
  public:
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -75,7 +76,7 @@ class Robot : public frc::TimedRobot {
   void DisabledInit() override;
   void DisabledPeriodic() override;
   frc::DoubleSolenoid::Value ConvertPNM(std::string_view);
-
+  void Abort();
  private:
 
 };

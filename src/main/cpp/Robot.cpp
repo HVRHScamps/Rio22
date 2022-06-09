@@ -15,14 +15,29 @@ void Robot::RobotInit() {
   compressor.EnableDigital();
   inst = nt::NetworkTableInstance::GetDefault();
   controlTable = inst.GetTable("control");
-  sensorTable = inst.GetTable("sensor");
+  sensorTable = inst.GetTable("sensors");
   leftDriveEncoder.SetDistancePerPulse(1/18.852);
   rightDriveEncoder.SetDistancePerPulse(1/18.852);
 }
 
 
 void Robot::RobotPeriodic() {
-  lastnum = controlTable->GetNumber("deadman",0); // This may be an issue if the robot code is fater than NetworkTables is. Might have to add a counter.
+  int encReset = (int) controlTable->GetNumber("encRst",0);
+  switch (encReset){
+    case 1:
+      ShootPosEncoder.Reset();
+      break;
+    case 2:
+      leftDriveEncoder.Reset();
+      break;
+    case 3:
+      rightDriveEncoder.Reset();
+      break;
+    case 4:
+      ShootSpeed.Reset();
+      break;
+  }
+  controlTable->PutNumber("encRst",0);
   sensorTable->PutBoolean("Override",!IsAutonomous());
   sensorTable->PutBoolean("Enable",IsEnabled());
   sensorTable->PutNumber("shootEncoder",ShootPosEncoder.Get());
@@ -37,13 +52,18 @@ void Robot::RobotPeriodic() {
 
 void Robot::AutonomousInit() {
 rDrive.SetInverted(true);
-rightDriveEncoder.SetReverseDirection(true);
+leftDriveEncoder.SetReverseDirection(true);
 }
 
 void Robot::AutonomousPeriodic() {
 if(controlTable->GetNumber("deadman",0) == lastnum){
-    std::cout << "Stopping due to saftey timeout" <<std::endl;
+    lnbadcount ++;
   }
+else {lnbadcount =0;}
+if(lnbadcount > 10){
+  std::cout << "Stopping due to saftey timeout" <<std::endl;
+  Abort();
+}
 else {
 drive.TankDrive(controlTable->GetNumber("driveL",0),controlTable->GetNumber("driveR",0),false);
 ShootWhl.Set(controlTable->GetNumber("shootWhl",0));
@@ -63,22 +83,7 @@ pickupPneumatic.Set(ConvertPNM("pickupPNM"));
 bottomTension.Set(ConvertPNM("lTensPNM"));
 topTension.Set(ConvertPNM("uTensPNM"));
 }
-int encReset = (int) controlTable->GetNumber("encRst",0);
-switch (encReset){
-  case 1:
-    ShootPosEncoder.Reset();
-    break;
-  case 2:
-    leftDriveEncoder.Reset();
-    break;
-  case 3:
-    rightDriveEncoder.Reset();
-    break;
-  case 4:
-    ShootSpeed.Reset();
-    break;
-}
-controlTable->PutNumber("encRst",0);
+lastnum = controlTable->GetNumber("deadman",0);
 }
 void Robot::TeleopInit() {
 }
@@ -96,6 +101,23 @@ frc::DoubleSolenoid::Value Robot::ConvertPNM(std::string_view key){
   if(val==1){return frc::DoubleSolenoid::kForward;}
   else if(val==-1){return frc::DoubleSolenoid::kReverse;}
   return frc::DoubleSolenoid::kOff;
+}
+
+void Robot::Abort(){
+lDrive.Set(0);
+rDrive.Set(0);
+cpMotor.Set(0);
+climb.Set(0);
+pickupM.Set(0);
+ShootPosMotor.Set(ShootPosMotor.kOff);
+ShootWhl.Set(0);
+BeltZ1.Set(0);
+BeltZ2.Set(0);
+BeltZ3.Set(0);
+colorSensorArm.Set(colorSensorArm.kReverse);
+pickupPneumatic.Set(pickupPneumatic.kReverse);
+bottomTension.Set(bottomTension.kForward);
+topTension.Set(topTension.kReverse);
 }
 
 #ifndef RUNNING_FRC_TESTS
