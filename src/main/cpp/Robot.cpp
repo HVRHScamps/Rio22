@@ -34,7 +34,7 @@ void Robot::RobotPeriodic() {
 
 
 void Robot::AutonomousInit() {
-
+rDrive.SetInverted(true);
 }
 
 void Robot::AutonomousPeriodic() {
