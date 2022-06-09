@@ -75,7 +75,6 @@ class Robot : public frc::TimedRobot {
   void DisabledInit() override;
   void DisabledPeriodic() override;
   frc::DoubleSolenoid::Value ConvertPNM(std::string_view);
-  void Abort();
 
  private:
 

@@ -20,10 +20,6 @@ void Robot::RobotInit() {
 
 
 void Robot::RobotPeriodic() {
-  if(controlTable->GetNumber("deadman",0) == lastnum || controlTable->GetBoolean("stop",true)){
-    std::cout << "Stopping due to saftey timeout" <<std::endl;
-    Abort();
-  }
   lastnum = controlTable->GetNumber("deadman",0); // This may be an issue if the robot code is fater than NetworkTables is. Might have to add a counter.
   sensorTable->PutBoolean("Override",!IsAutonomous());
   sensorTable->PutBoolean("Enable",IsEnabled());
@@ -42,7 +38,11 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
-drive.TankDrive(controlTable->GetNumber("driveL",0),controlTable->GetNumber("driveR",0));
+if(controlTable->GetNumber("deadman",0) == lastnum){
+    std::cout << "Stopping due to saftey timeout" <<std::endl;
+  }
+else {
+drive.TankDrive(controlTable->GetNumber("driveL",0),controlTable->GetNumber("driveR",0),false);
 ShootWhl.Set(controlTable->GetNumber("shootWhl",0));
 double shootPosv = controlTable->GetNumber("shootPos",0); //creates local var to reduse NT calls
 if (shootPosv == -1){ShootPosMotor.Set(ShootPosMotor.kReverse);}
@@ -59,6 +59,7 @@ colorSensorArm.Set(ConvertPNM("clrPnlPNM"));
 pickupPneumatic.Set(ConvertPNM("pickupPNM"));
 bottomTension.Set(ConvertPNM("lTensPNM"));
 topTension.Set(ConvertPNM("uTensPNM"));
+}
 int encReset = (int) controlTable->GetNumber("encRst",0);
 switch (encReset){
   case 1:
@@ -77,7 +78,6 @@ switch (encReset){
 controlTable->PutNumber("encRst",0);
 }
 void Robot::TeleopInit() {
-  Abort();
 }
 
 void Robot::TeleopPeriodic() {
@@ -93,22 +93,6 @@ frc::DoubleSolenoid::Value Robot::ConvertPNM(std::string_view key){
   if(val==1){return frc::DoubleSolenoid::kForward;}
   else if(val==-1){return frc::DoubleSolenoid::kReverse;}
   return frc::DoubleSolenoid::kOff;
-}
-
-void Robot::Abort(){
-drive.StopMotor();
-cpMotor.StopMotor();
-climb.StopMotor();
-pickupM.StopMotor();
-ShootPosMotor.Set(ShootPosMotor.kOff);
-ShootWhl.StopMotor();
-BeltZ1.StopMotor();
-BeltZ2.StopMotor();
-BeltZ3.StopMotor();
-colorSensorArm.Set(colorSensorArm.kReverse);
-pickupPneumatic.Set(pickupPneumatic.kReverse);
-bottomTension.Set(bottomTension.kForward);
-topTension.Set(topTension.kReverse);
 }
 
 #ifndef RUNNING_FRC_TESTS
