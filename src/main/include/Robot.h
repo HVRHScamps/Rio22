@@ -74,10 +74,6 @@ class Robot : public frc::TimedRobot {
   void TeleopPeriodic() override;
   void DisabledInit() override;
   void DisabledPeriodic() override;
-  void TestInit() override;
-  void TestPeriodic() override;
-  void SimulationInit() override;
-  void SimulationPeriodic() override;
   frc::DoubleSolenoid::Value ConvertPNM(std::string_view);
   void Abort();
 
