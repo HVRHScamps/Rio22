@@ -60,7 +60,7 @@ if(controlTable->GetNumber("deadman",0) == lastnum){
     lnbadcount ++;
   }
 else {lnbadcount =0;}
-if(lnbadcount > 10){
+if(lnbadcount > 10 || controlTable->GetBoolean("stop",true)){
   std::cout << "Stopping due to saftey timeout" <<std::endl;
   Abort();
 }
@@ -104,8 +104,7 @@ frc::DoubleSolenoid::Value Robot::ConvertPNM(std::string_view key){
 }
 
 void Robot::Abort(){
-lDrive.Set(0);
-rDrive.Set(0);
+drive.TankDrive(0,0,false);
 cpMotor.Set(0);
 climb.Set(0);
 pickupM.Set(0);

@@ -57,7 +57,7 @@ class Robot : public frc::TimedRobot {
 	frc::Encoder leftDriveEncoder{DIGCHANNELLEFTDRIVEA,DIGCHANNELLEFTDRIVEB,false,frc::Encoder::k4X};
 	frc::Encoder rightDriveEncoder{DIGCHANNELRIGHTDRIVEA,DIGCHANNELRIGHTDRIVEB,false,frc::Encoder::k4X};
   frc::Counter ShootSpeed{DIGCHANNELSHOOTSPEED};
-  static constexpr auto i2cPort0 = frc::I2C::Port::kOnboard;
+  static constexpr auto i2cPort0 = frc::I2C::Port::kMXP;
   rev::ColorSensorV3 colorSensor0{i2cPort0};
 
   nt::NetworkTableInstance inst;
